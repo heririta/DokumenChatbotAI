@@ -1,0 +1,7 @@
+{
+  "document_id": 64,
+  "num_documents": 17,
+  "embedding_dimension": 1024,
+  "embedding_model": "embed-multilingual-v3.0",
+  "created_at": "2025-10-07 06:13:56.395509"
+}
