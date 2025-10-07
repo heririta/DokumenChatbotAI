@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 from langchain.schema import Document as LangchainDocument
 from langchain_cohere import CohereEmbeddings
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from config import Config
 from database import db
@@ -22,9 +21,7 @@ class VectorStoreManager:
         self.vector_stores = {}  # In-memory cache
         self._initialized = False
         # Set embedding dimension based on provider
-        if Config.EMBEDDING_PROVIDER == "google":
-            self.embedding_dimension = 768  # Google embeddings dimension
-        elif Config.EMBEDDING_PROVIDER == "cohere":
+        if Config.EMBEDDING_PROVIDER == "cohere":
             self.embedding_dimension = 1024  # Cohere embeddings dimension
         else:
             self.embedding_dimension = 768  # Default
@@ -39,19 +36,6 @@ class VectorStoreManager:
     def _init_embeddings(self):
         """Initialize embeddings with error handling"""
         try:
-            if Config.EMBEDDING_PROVIDER == "google":
-                # Get API key from environment
-                api_key = Config.GOOGLE_API_KEY
-                if not api_key:
-                    raise ValueError("Google API Key is required. Please set it in your .env file.")
-
-                self.embeddings = GoogleGenerativeAIEmbeddings(
-                    model=Config.EMBEDDING_MODEL,
-                    google_api_key=api_key,
-                    transport="rest"
-                )
-                print("Google embeddings initialized successfully")
-            elif Config.EMBEDDING_PROVIDER == "cohere":
                 # Get API key from environment
                 api_key = Config.COHERE_API_KEY
                 if not api_key:
@@ -62,8 +46,6 @@ class VectorStoreManager:
                     cohere_api_key=api_key
                 )
                 print("Cohere embeddings initialized successfully")
-            else:
-                raise ValueError(f"Unsupported embedding provider: {Config.EMBEDDING_PROVIDER}. Supported providers: google, cohere.")
         except Exception as e:
             print(f"Failed to initialize embeddings ({Config.EMBEDDING_PROVIDER}): {str(e)}")
             self.embeddings = None
